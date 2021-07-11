@@ -229,26 +229,53 @@ km_read_section(int fd, const char *section_name, struct xrdp_key_info *keymap)
 
 /*****************************************************************************/
 int
-get_keymaps(int keylayout, struct xrdp_keymap *keymap)
+// get_keymaps(int keylayout, struct xrdp_keymap *keymap)
+get_keymaps(int keylayout, struct xrdp_keymap *keymap, int keyboard_type)
 {
     int fd;
-    int basic_key_layout = keylayout & 0x0000ffff;
+    //    int basic_key_layout = keylayout & 0x0000ffff;
     char *filename;
     struct xrdp_keymap *lkeymap;
 
     filename = (char *)g_malloc(256, 0);
 
-    /* check if there is a keymap file e.g. km-e00100411.ini */
-    g_snprintf(filename, 255, "%s/km-%08x.ini", XRDP_CFG_PATH, keylayout);
-
-    /* if the file does not exist, use only lower 16 bits instead */
-    if (!g_file_exist(filename))
+    /* */
+    if (keyboard_type == 0x04)
     {
-        LOG(LOG_LEVEL_WARNING, "Cannot find keymap file %s", filename);
-        /* e.g. km-00000411.ini */
-        g_snprintf(filename, 255, "%s/km-%08x.ini", XRDP_CFG_PATH, basic_key_layout);
+        /* When the keyboard type is 0x04 (PC101/102 keyboard) and the lower 16
+           bits are a value of 0x0411(Japanese KeyLayout), the kbd_layout is
+           set to 0x00000409 (us english KeyLayout)*/
+        if ((keylayout & 0x0000FFFF) == 0x00000411)
+        {
+            LOG(LOG_LEVEL_INFO, "overrode keyLayout 0x%08X with 0x%08X"
+                " for Japanese environment", keylayout, 0x00000409);
+            keylayout = 0x00000409;
+        }
+    }
+    else if (keyboard_type == 0x07)
+    {
+        /* When the keyboard type is 0x07 (Japanese keyboard) and the lower 16
+           bits are a value of 0x0411(Japanese KeyLayout), the kbd_layout is set
+           to 0x00000411 no matter what the upper 16 bits are. */
+        if ((keylayout & 0x0000FFFF) == 0x00000411)
+        {
+            LOG(LOG_LEVEL_INFO, "overrode keyLayout 0x%08X with 0x%08X"
+                " for Japanese environment", keylayout, 0x00000411);
+            keylayout = 0x00000411;
+        }
     }
 
+    /* check if there is a keymap file e.g. km-e00100411.ini */
+    g_snprintf(filename, 255, "%s/km-%08x.ini", XRDP_CFG_PATH, keylayout);
+    //
+    //    /* if the file does not exist, use only lower 16 bits instead */
+    //    if (!g_file_exist(filename))
+    //    {
+    //        LOG(LOG_LEVEL_WARNING, "Cannot find keymap file %s", filename);
+    //        /* e.g. km-00000411.ini */
+    //        g_snprintf(filename, 255, "%s/km-%08x.ini", XRDP_CFG_PATH, basic_key_layout);
+    //    }
+    //
     /* finally, use 'en-us' */
     if (!g_file_exist(filename))
     {

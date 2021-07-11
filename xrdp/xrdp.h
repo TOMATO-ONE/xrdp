@@ -351,7 +351,7 @@ get_char_from_scan_code(int device_flags, int scan_code, int *keys,
                         int caps_lock, int num_lock, int scroll_lock,
                         struct xrdp_keymap *keymap);
 int
-get_keymaps(int keylayout, struct xrdp_keymap *keymap);
+get_keymaps(int keylayout, struct xrdp_keymap *keymap, int keyboard_type);
 
 /* xrdp_login_wnd.c */
 int

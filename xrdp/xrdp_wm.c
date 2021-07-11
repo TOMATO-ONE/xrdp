@@ -64,7 +64,8 @@ xrdp_wm_create(struct xrdp_process *owner,
     self->mm = xrdp_mm_create(self);
     self->default_font = xrdp_font_create(self);
     /* this will use built in keymap or load from file */
-    get_keymaps(self->session->client_info->keylayout, &(self->keymap));
+    get_keymaps(self->session->client_info->keylayout, &(self->keymap),
+                self->session->client_info->keyboard_type);
     xrdp_wm_set_login_state(self, WMLS_RESET);
     self->target_surface = self->screen;
     self->current_surface_index = 0xffff; /* screen */
@@ -228,7 +229,6 @@ xrdp_wm_load_pointer(struct xrdp_wm *self, char *file_name, char *data,
                      char *mask, int *x, int *y)
 {
     int fd;
-    int len;
     int bpp;
     int w;
     int h;
@@ -257,16 +257,8 @@ xrdp_wm_load_pointer(struct xrdp_wm *self, char *file_name, char *data,
         return 1;
     }
 
-    len = g_file_read(fd, fs->data, 8192);
+    g_file_read(fd, fs->data, 8192);
     g_file_close(fd);
-    if (len <= 0)
-    {
-        LOG(LOG_LEVEL_ERROR, "xrdp_wm_load_pointer: read error from file [%s]",
-            file_name);
-        xstream_free(fs);
-        return 1;
-    }
-    fs->end = fs->data + len;
     in_uint8s(fs, 6);
     in_uint8(fs, w);
     in_uint8(fs, h);
