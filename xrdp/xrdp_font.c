@@ -79,9 +79,25 @@ xrdp_font_create(struct xrdp_wm *wm)
     int file_size;
     struct xrdp_font_char *f;
     char file_path[256];
+    char font_name[256];
+    struct xrdp_cfg_globals *globals;
+    globals = &wm->xrdp_config->cfg_globals;
 
     LOG_DEVEL(LOG_LEVEL_TRACE, "in xrdp_font_create");
-    g_snprintf(file_path, 255, "%s/%s", XRDP_SHARE_PATH, DEFAULT_FONT_NAME);
+    if (globals->ls_font_name[0] == 0)
+    {
+        g_sprintf(font_name, "%s", DEFAULT_FONT_NAME);
+        LOG(LOG_LEVEL_WARNING,"xrdp_font_create: use default font [%s]",
+            font_name);
+    }
+    else
+    {
+        g_sprintf(font_name, "%s", globals->ls_font_name);
+        LOG(LOG_LEVEL_WARNING,"xrdp_font_create: use  font [%s]",
+            font_name);
+    }
+
+    g_snprintf(file_path, 255, "%s/%s", XRDP_SHARE_PATH, font_name);
 
     if (!g_file_exist(file_path))
     {
