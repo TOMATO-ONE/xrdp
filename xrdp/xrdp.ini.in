@@ -109,6 +109,7 @@ grey=dedede
 ;
 ; configure login screen
 ;
+
 ; Login Screen Window Title
 #ls_title=My Login Title
 
