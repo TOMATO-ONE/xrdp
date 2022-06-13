@@ -1165,6 +1165,12 @@ load_xrdp_config(struct xrdp_config *config, const char *xrdp_ini, int bpp)
         }
 
         /* login screen values */
+        else if (g_strncmp(n, "ls_font_filename", 255) == 0)
+        {
+            g_strncpy(globals->ls_font_filename, v, 255);
+            globals->ls_font_filename[255] = 0;
+        }
+
         else if (g_strncmp(n, "ls_top_window_bg_color", 64) == 0)
         {
             globals->ls_top_window_bg_color = HCOLOR(bpp, xrdp_wm_htoi(v));
@@ -1338,6 +1344,7 @@ load_xrdp_config(struct xrdp_config *config, const char *xrdp_ini, int bpp)
     LOG(LOG_LEVEL_DEBUG, "ls_width:                %d", globals->ls_width);
     LOG(LOG_LEVEL_DEBUG, "ls_height:               %d", globals->ls_height);
     LOG(LOG_LEVEL_DEBUG, "ls_bg_color:             %x", globals->ls_bg_color);
+    LOG(LOG_LEVEL_DEBUG, "ls_font_filename:             %s", globals->ls_font_filename);
     LOG(LOG_LEVEL_DEBUG, "ls_title:                %s", globals->ls_title);
     LOG(LOG_LEVEL_DEBUG, "ls_logo_filename:        %s", globals->ls_logo_filename);
     LOG(LOG_LEVEL_DEBUG, "ls_logo_x_pos:           %d", globals->ls_logo_x_pos);

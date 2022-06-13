@@ -203,6 +203,9 @@ struct xrdp_client_info
     int enable_token_login;
     char domain_user_separator[16];
 
+    /* login screen font file */
+    char ls_font_filename[512];
+
     /* xrdp.override_* values */
     struct xrdp_keyboard_overrides xrdp_keyboard_overrides;
 };

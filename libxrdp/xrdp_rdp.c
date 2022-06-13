@@ -27,6 +27,7 @@
 #include "log.h"
 #include "ssl_calls.h"
 #include "string_calls.h"
+#include "xrdp/xrdp.h"
 
 #if defined(XRDP_NEUTRINORDP)
 #include <freerdp/codec/rfx.h>
@@ -281,6 +282,25 @@ xrdp_rdp_read_config(const char *xrdp_ini, struct xrdp_client_info *client_info)
                  && g_strlen(value) > 0)
         {
             g_strncpy(client_info->domain_user_separator, value, sizeof(client_info->domain_user_separator) - 1);
+        }
+        else if (g_strcasecmp(item, "ls_font_filename") == 0)
+        {
+            g_memset(client_info->ls_font_filename, 0, sizeof(char) * 512);
+            if (g_strlen(value) == 0)
+            {
+                /* default ls_font_file path */
+                g_snprintf(client_info->ls_font_filename, 511, "%s",
+                    DEFAULT_FONT_NAME);
+                LOG(LOG_LEVEL_INFO, "Using default Login Screen Font file: %s",
+                    client_info->ls_font_filename);
+            }
+            else
+            {
+                /* use user defined ls_font_file */
+                g_strncpy(client_info->ls_font_filename, value, 511);
+                LOG(LOG_LEVEL_INFO, "Using  Login Screen Font file: %s",
+                    client_info->ls_font_filename);
+            }
         }
         else if (g_strcasecmp(item, "xrdp.override_keyboard_type") == 0)
         {

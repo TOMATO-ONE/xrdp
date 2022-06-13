@@ -62,6 +62,8 @@ xrdp_wm_create(struct xrdp_process *owner,
     self->log = list_create();
     self->log->auto_free = 1;
     self->mm = xrdp_mm_create(self);
+    /* to store configuration from xrdp.ini */
+    self->xrdp_config = g_new0(struct xrdp_config, 1);
     self->default_font = xrdp_font_create(self);
     /* this will use built in keymap or load from file */
     get_keymaps(self->session->client_info->keylayout, &(self->keymap));
@@ -69,8 +71,8 @@ xrdp_wm_create(struct xrdp_process *owner,
     self->target_surface = self->screen;
     self->current_surface_index = 0xffff; /* screen */
 
-    /* to store configuration from xrdp.ini */
-    self->xrdp_config = g_new0(struct xrdp_config, 1);
+//    /* to store configuration from xrdp.ini */
+//    self->xrdp_config = g_new0(struct xrdp_config, 1);
 
     return self;
 }
